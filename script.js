@@ -17,9 +17,16 @@ const gameFlow = (() => {
 })();
 
 const displayController = (() => {
-   
-
-    return {}
+    const squaresNodeList = document.getElementsByClassName('square');
+    const squaresDomArray = Array.from(squaresNodeList);
+    
+    const displayBoard = array => {
+        for(let i = 0; i < array.length; i++){
+            squaresDomArray[i].textContent = array[i];
+        }
+    }
+    
+    return {displayBoard}
 })();
 
 const Player = (name, symbol) => {
@@ -31,6 +38,11 @@ const Player = (name, symbol) => {
 
 const player1 = Player('Player 1', 'X');
 const player2 = Player('Player 2', 'O');
+
+displayController.displayBoard(gameBoard.getGameBoard());
+
+
+
 
 
 
