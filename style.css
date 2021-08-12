@@ -1,0 +1,15 @@
+#gameboard{
+    border: 3px solid black;
+    width: 600px;
+    height: 600px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    margin: 0 auto;
+    margin-top: 150px;
+}
+
+.square{
+    border: 3px solid black;
+}
+

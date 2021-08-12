@@ -1,29 +1,36 @@
 'use strict';
 
 const gameBoard = (() => {
-    let board = ['x', 'o', 'x', 'x', 'o', 'x','x', 'o', 'x'];
+    let board = ['x', 'o', 'x', 
+                 'x', 'o', 'x',
+                 'x', 'o', 'x'];
     
-    return {board};
+    const getGameBoard = () => board;
+    
+    return {getGameBoard};
 })();
 
-const gameState = (() => {
+const gameFlow = (() => {
     
     
     return {};
 })();
 
 const displayController = (() => {
-    const log = () => {
-        console.log(gameBoard.board);
-    }
+   
 
-    return {log}
+    return {}
 })();
 
-const Player = () => {
-    return {}
+const Player = (name, symbol) => {
+    const getName = () => name;
+    const getSymbol = () => symbol;
+    
+    return {getName, getSymbol}
 }
 
+const player1 = Player('Player 1', 'X');
+const player2 = Player('Player 2', 'O');
 
-displayController.log()
-//const player1 = Player();
+
+
