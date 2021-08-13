@@ -11,10 +11,20 @@ const gameBoard = (() => {
 })();
 
 const gameController = (() => {
-    //temp
     const makeMove = (event) => {
-       console.log(event.target.id) 
-    }    
+       const targetSquare = event.target.id;
+       isValidMove(gameBoard.getGameBoard(), targetSquare); 
+    }
+    
+    const isValidMove = (currentBoard, squareId) => {
+        if(currentBoard[squareId]){
+            console.log('NOT EMPTY');
+            return false;
+        }else{
+            console.log('EMPTY');
+            return true;
+        }
+    }
     return {makeMove};
 })();
 
