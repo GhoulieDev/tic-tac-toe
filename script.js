@@ -1,3 +1,5 @@
+//make UI, have inputable names, reset game button, display to say winner
+
 'use strict';
 const Player = (name, symbol) => {
     const getName = () => name;
@@ -52,6 +54,7 @@ const gameController = (() => {
            //displayController.displayBoard(gameBoard.getGameBoard());
            displayController.displaySquare(gameBoard.getGameBoard(), targetSquare);
            turnCounter++;
+           checkForTie();
         }
     }
     
@@ -74,6 +77,12 @@ const gameController = (() => {
                 console.log('winning line found')
                 console.log(winningLines[selectedSquare][i])
             }
+        }
+    }
+
+    const checkForTie = () => {
+        if(turnCounter == 10){
+            console.log('tie')
         }
     }
     
@@ -99,28 +108,15 @@ const displayController = (() => {
     const displaySquare = (boardArray, square) => {
         squaresDomArray[square].textContent = boardArray[square];
     }
-    
+
+    //test this
+    displayBoard(gameBoard.getGameBoard());
+
     return {displayBoard, displaySquare}
 })();
 
 const player1 = Player('Player 1', 'X');
 const player2 = Player('Player 2', 'O');
 
-displayController.displayBoard(gameBoard.getGameBoard());
-
-// const winningLines = {
-    //     rowTop: [0, 1, 2],
-    //     rowMid: [3, 4, 5],
-    //     rowBot: [6, 7, 8],
-    //     columnLeft: [0, 3, 6],
-    //     columnMid: [1, 4, 7],
-    //     columnRight: [2, 5, 8],
-    //     diagonalOne: [0, 4, 8],
-    //     diagonalTwo: [2, 4, 6]
-    // }
-
-
-
-
-
+//displayController.displayBoard(gameBoard.getGameBoard());
 
