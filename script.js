@@ -1,4 +1,4 @@
-//make UI, have inputable names, reset game button, display to say winner
+//make UI, have inputable names, display to say winner
 
 'use strict';
 const Player = (name, symbol) => {
@@ -9,7 +9,7 @@ const Player = (name, symbol) => {
 };
 
 const gameBoard = (() => {
-    const board = ['', '', '', 
+    let board = ['', '', '', 
                    '', '', '',
                    '', '', ''];
     
@@ -18,8 +18,14 @@ const gameBoard = (() => {
     const setSquare = (square, symbol) => {
         board[square] = symbol;
     }
+
+    const resetBoard = () => {
+        board = ['', '', '', 
+        '', '', '',
+        '', '', ''];
+    }
     
-    return {getGameBoard, setSquare};
+    return {getGameBoard, setSquare, resetBoard};
 })();
 
 const gameController = (() => {
@@ -59,11 +65,10 @@ const gameController = (() => {
     }
     
     const isValidMove = (currentBoard, squareId) => {
+        //checks if square contains anything
         if(currentBoard[squareId]){
-            //square already filled
             return false;
         }else{
-            //empty square therefore valid move
             return true;
         }
     }
@@ -85,8 +90,14 @@ const gameController = (() => {
             console.log('tie')
         }
     }
+
+    const resetGame = () => {
+        gameBoard.resetBoard();
+        displayController.displayBoard(gameBoard.getGameBoard());
+        turnCounter = 1;
+    }
     
-    return {makeMove};
+    return {makeMove, resetGame};
 })();
 
 const displayController = (() => {
@@ -97,26 +108,23 @@ const displayController = (() => {
         square.addEventListener('click', gameController.makeMove);
     })
 
-    //displays the whole board in its current state
     const displayBoard = boardArray => {
         for(let i = 0; i < boardArray.length; i++){
             squaresDomArray[i].textContent = boardArray[i];
         }
     }
 
-    //displays single square after a move is made
     const displaySquare = (boardArray, square) => {
         squaresDomArray[square].textContent = boardArray[square];
     }
-
-    //test this
+    
     displayBoard(gameBoard.getGameBoard());
-
+    
     return {displayBoard, displaySquare}
 })();
 
 const player1 = Player('Player 1', 'X');
 const player2 = Player('Player 2', 'O');
 
-//displayController.displayBoard(gameBoard.getGameBoard());
+
 
