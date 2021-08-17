@@ -1,6 +1,6 @@
-//display winner/tie
 //input names
-//split up player move function?
+//reset game button and a reset round button?
+//AI functionality
 
 'use strict';
 const Player = (name, symbol) => {
@@ -120,11 +120,31 @@ const displayController = (() => {
     const squaresDomArray = Array.from(squaresNodeList);
     const newGameButton = document.getElementById('new-game');
     const bodyElement = document.querySelector('body');
+    const form = document.getElementById('player-form');
+
     const winnerInfoDiv = document.createElement('div');
     const winnerInfoPara = document.createElement('p');
     winnerInfoDiv.classList.add('winner-display');
     
-    newGameButton.addEventListener('click', gameController.resetGame)
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        //function to set players here--------------
+        //   gamecontroller.setPlayers????
+        form.reset();
+        closeForm();
+        gameController.resetGame();
+    })
+
+    const closeForm = () => {
+        form.style.display = 'none';
+    }
+    
+    const showForm = () => {
+        form.style.display = 'flex';
+    }
+
+    newGameButton.addEventListener('click', showForm)
+    //newGameButton.addEventListener('click', gameController.resetGame)
     
     const addListeners = () => {
         squaresDomArray.forEach(square => {
@@ -170,14 +190,15 @@ const displayController = (() => {
         }
     }
     
-    displayBoard(gameBoard.getGameBoard());
-    addListeners();
+    //displayBoard(gameBoard.getGameBoard());
+    //addListeners();
+    showForm();
     
     return {addListeners, displayBoard, displaySquare, displayWinner, displayTie, clearUI}
 })();
 
-const player1 = Player('Player 1', 'X');
-const player2 = Player('Player 2', 'O');
+const player1 = Player('Mark', 'X');
+const player2 = Player('Joe', 'O');
 
 
 

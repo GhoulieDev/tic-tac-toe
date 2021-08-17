@@ -11,6 +11,7 @@ h1{
     font-size: 80px;
     margin-bottom: 20px;
     font-family: Arial;
+    text-shadow: 3px 2px lightskyblue;
 }
 
 #new-game{
@@ -23,7 +24,7 @@ h1{
 }
 
 #new-game:hover{
-    background-color: lightgreen;
+    background-color: lightskyblue;
 }
 
 #new-game:active{
@@ -46,6 +47,7 @@ h1{
     align-items: center;
     font-size: 80px;
     font-family: Arial;
+    text-shadow: 3px 3px lightskyblue;
 }
 
 .square:hover{
@@ -78,4 +80,40 @@ h1{
     text-align: center;
     padding: 20px;
     font-weight: 700;
+}
+
+#player-form{
+    border: 3px solid black;
+    background-color: white;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    padding: 10px;
+    z-index: 9;
+    position: absolute;
+    top: 25%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    font-family: Arial;
+}
+
+#form-title{
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+#form-button{
+    width: 100px;
+    height: 30px;
+    background-color: lightskyblue;
+    border: 2px solid black;
+    font-family: Arial;
+    font-size: 16px;
+}
+
+input{
+    width: 50%;
+    margin: 20px;
 }
