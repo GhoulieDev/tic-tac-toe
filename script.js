@@ -1,4 +1,6 @@
-//make UI, have inputable names, display to say winner
+//display winner/tie
+//input names
+//split up player move function?
 
 'use strict';
 const Player = (name, symbol) => {
@@ -30,6 +32,7 @@ const gameBoard = (() => {
 
 const gameController = (() => {
     let turnCounter = 1;
+    let playerTurn;
     
     /*assigning each square/squareID the possible ways to produce a winning result 
     e.g if 0(top left) chosen it can be won via top row, left column or diagonal top left to bottom right */
@@ -48,53 +51,65 @@ const gameController = (() => {
     const makeMove = (event) => {
        const targetSquare = event.target.id;
        
-       if(isValidMove(gameBoard.getGameBoard(), targetSquare)){
+        if(isValidMove(gameBoard.getGameBoard(), targetSquare)){
             //odd numbers for player 1's turn, even for player 2's turn
             if(turnCounter % 2 != 0){
-               gameBoard.setSquare(targetSquare, player1.getSymbol());
-               checkForWin(targetSquare, player1.getSymbol(), gameBoard.getGameBoard());
+                playerTurn = player1;
+                //gameBoard.setSquare(targetSquare, player1.getSymbol());
+                //checkForWin(targetSquare, player1, gameBoard.getGameBoard());
+               
             }else{
-               gameBoard.setSquare(targetSquare, player2.getSymbol());
-               checkForWin(targetSquare, player2.getSymbol(), gameBoard.getGameBoard());
-           }
-           //displayController.displayBoard(gameBoard.getGameBoard());
-           displayController.displaySquare(gameBoard.getGameBoard(), targetSquare);
-           turnCounter++;
-           checkForTie();
+                playerTurn = player2;
+                //gameBoard.setSquare(targetSquare, player2.getSymbol());
+                //checkForWin(targetSquare, player2, gameBoard.getGameBoard());
+            }
+            gameBoard.setSquare(targetSquare, playerTurn.getSymbol());
+            displayController.displaySquare(gameBoard.getGameBoard(), targetSquare);
+
+            //check for a winner and if none is found we want to check for a tie
+            if(!checkForWin(targetSquare, playerTurn, gameBoard.getGameBoard())){
+                turnCounter++;
+                checkForTie();
+            }
+            
         }
     }
     
     const isValidMove = (currentBoard, squareId) => {
-        //checks if square contains anything
-        if(currentBoard[squareId]){
-            return false;
-        }else{
+        //if empty square return true for valid move to be made
+        if(!currentBoard[squareId]){
             return true;
+        }else{
+            return false;
         }
     }
 
-    //to check if won we take the selected square and player symbol, and check the board array with the possible ways to win from that selected square. This was chosen because rather than checking all 8 winning combnations every time a move was selected we only check 2-4 possibilies depending on the square selected
-    const checkForWin = (selectedSquare, playerSymbol, board) => {
+    //to check if won we take the selected square and player, and check the board array with the possible ways to win from that selected square. This was chosen because rather than checking all 8 winning combnations every time a move was selected we only check 2-4 possibilies depending on the square selected
+    const checkForWin = (selectedSquare, player, board) => {
         for(let i = 0; i < winningLines[selectedSquare].length; i++){
-            if(board[winningLines[selectedSquare][i][0]] == playerSymbol && 
-               board[winningLines[selectedSquare][i][1]] == playerSymbol && 
-               board[winningLines[selectedSquare][i][2]] == playerSymbol){
-                console.log('winning line found')
-                console.log(winningLines[selectedSquare][i])
+            if(board[winningLines[selectedSquare][i][0]] == player.getSymbol() && 
+               board[winningLines[selectedSquare][i][1]] == player.getSymbol() && 
+               board[winningLines[selectedSquare][i][2]] == player.getSymbol()){
+                //console.log('winning line found');
+                //console.log(winningLines[selectedSquare][i]);
+                displayController.displayWinner(player);
+                return true;
             }
         }
     }
 
     const checkForTie = () => {
         if(turnCounter == 10){
-            console.log('tie')
+          displayController.displayTie();  
         }
     }
 
     const resetGame = () => {
+        turnCounter = 1;
         gameBoard.resetBoard();
         displayController.displayBoard(gameBoard.getGameBoard());
-        turnCounter = 1;
+        displayController.clearUI();
+        displayController.addListeners();
     }
     
     return {makeMove, resetGame};
@@ -103,10 +118,25 @@ const gameController = (() => {
 const displayController = (() => {
     const squaresNodeList = document.getElementsByClassName('square');
     const squaresDomArray = Array.from(squaresNodeList);
+    const newGameButton = document.getElementById('new-game');
+    const bodyElement = document.querySelector('body');
+    const winnerInfoDiv = document.createElement('div');
+    const winnerInfoPara = document.createElement('p');
+    winnerInfoDiv.classList.add('winner-display');
     
-    squaresDomArray.forEach(square => {
-        square.addEventListener('click', gameController.makeMove);
-    })
+    newGameButton.addEventListener('click', gameController.resetGame)
+    
+    const addListeners = () => {
+        squaresDomArray.forEach(square => {
+            square.addEventListener('click', gameController.makeMove);
+        });
+    }
+
+    const removeListeners = () => {
+        squaresDomArray.forEach(square => {
+            square.removeEventListener('click', gameController.makeMove);
+        })
+    }
 
     const displayBoard = boardArray => {
         for(let i = 0; i < boardArray.length; i++){
@@ -118,9 +148,32 @@ const displayController = (() => {
         squaresDomArray[square].textContent = boardArray[square];
     }
     
-    displayBoard(gameBoard.getGameBoard());
+    const displayWinner = (player) => {
+        removeListeners();
+        winnerInfoPara.textContent = `Congratulations ${player.getName()}! You Win!`;
+        winnerInfoDiv.appendChild(winnerInfoPara);
+        bodyElement.appendChild(winnerInfoDiv);
+    }
+
+    const displayTie = () => {
+        removeListeners();
+        winnerInfoPara.textContent = 'It\'s a tie!';
+        winnerInfoDiv.appendChild(winnerInfoPara);
+        bodyElement.appendChild(winnerInfoDiv);
+    }
     
-    return {displayBoard, displaySquare}
+    const clearUI = () => {
+        if(winnerInfoPara.textContent){
+            winnerInfoPara.textContent = '';
+            winnerInfoDiv.removeChild(winnerInfoPara);
+            bodyElement.removeChild(winnerInfoDiv);
+        }
+    }
+    
+    displayBoard(gameBoard.getGameBoard());
+    addListeners();
+    
+    return {addListeners, displayBoard, displaySquare, displayWinner, displayTie, clearUI}
 })();
 
 const player1 = Player('Player 1', 'X');
