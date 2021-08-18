@@ -1,7 +1,3 @@
-//input names
-//reset game button and a reset round button?
-//AI functionality
-
 'use strict';
 const Player = (name, symbol) => {
     const getName = () => name;
@@ -33,7 +29,9 @@ const gameBoard = (() => {
 const gameController = (() => {
     let turnCounter = 1;
     let playerTurn;
-    
+    let player1;
+    let player2;
+
     /*assigning each square/squareID the possible ways to produce a winning result 
     e.g if 0(top left) chosen it can be won via top row, left column or diagonal top left to bottom right */
     const winningLines = {
@@ -47,21 +45,21 @@ const gameController = (() => {
         7: [[6, 7, 8], [1, 4, 7]],
         8: [[6, 7 ,8], [0, 4, 8], [2, 5, 8]],
     }
+
+    const setPlayers = (player1Name, player2Name) => {
+        player1 = Player(player1Name, 'X');
+        player2 = Player(player2Name, 'O');
+    }
     
     const makeMove = (event) => {
-       const targetSquare = event.target.id;
+        const targetSquare = event.target.id;
        
         if(isValidMove(gameBoard.getGameBoard(), targetSquare)){
             //odd numbers for player 1's turn, even for player 2's turn
             if(turnCounter % 2 != 0){
                 playerTurn = player1;
-                //gameBoard.setSquare(targetSquare, player1.getSymbol());
-                //checkForWin(targetSquare, player1, gameBoard.getGameBoard());
-               
             }else{
                 playerTurn = player2;
-                //gameBoard.setSquare(targetSquare, player2.getSymbol());
-                //checkForWin(targetSquare, player2, gameBoard.getGameBoard());
             }
             gameBoard.setSquare(targetSquare, playerTurn.getSymbol());
             displayController.displaySquare(gameBoard.getGameBoard(), targetSquare);
@@ -71,7 +69,6 @@ const gameController = (() => {
                 turnCounter++;
                 checkForTie();
             }
-            
         }
     }
     
@@ -90,8 +87,6 @@ const gameController = (() => {
             if(board[winningLines[selectedSquare][i][0]] == player.getSymbol() && 
                board[winningLines[selectedSquare][i][1]] == player.getSymbol() && 
                board[winningLines[selectedSquare][i][2]] == player.getSymbol()){
-                //console.log('winning line found');
-                //console.log(winningLines[selectedSquare][i]);
                 displayController.displayWinner(player);
                 return true;
             }
@@ -104,21 +99,24 @@ const gameController = (() => {
         }
     }
 
-    const resetGame = () => {
-        turnCounter = 1;
-        gameBoard.resetBoard();
-        displayController.displayBoard(gameBoard.getGameBoard());
-        displayController.clearUI();
-        displayController.addListeners();
+    const resetRound = () => {
+        if(player1 && player2){
+            turnCounter = 1;
+            gameBoard.resetBoard();
+            displayController.displayBoard(gameBoard.getGameBoard());
+            displayController.clearUI();
+            displayController.addListeners();
+        }
     }
     
-    return {makeMove, resetGame};
+    return {makeMove, resetRound, setPlayers};
 })();
 
 const displayController = (() => {
     const squaresNodeList = document.getElementsByClassName('square');
     const squaresDomArray = Array.from(squaresNodeList);
     const newGameButton = document.getElementById('new-game');
+    const newRoundButton = document.getElementById('new-round');
     const bodyElement = document.querySelector('body');
     const form = document.getElementById('player-form');
 
@@ -127,14 +125,15 @@ const displayController = (() => {
     winnerInfoDiv.classList.add('winner-display');
     
     form.addEventListener('submit', event => {
+        let player1Name = document.getElementById('player-1-name').value;
+        let player2Name = document.getElementById('player-2-name').value;
         event.preventDefault();
-        //function to set players here--------------
-        //   gamecontroller.setPlayers????
+        gameController.setPlayers(player1Name, player2Name);
         form.reset();
         closeForm();
-        gameController.resetGame();
+        gameController.resetRound();
     })
-
+    
     const closeForm = () => {
         form.style.display = 'none';
     }
@@ -142,10 +141,10 @@ const displayController = (() => {
     const showForm = () => {
         form.style.display = 'flex';
     }
-
-    newGameButton.addEventListener('click', showForm)
-    //newGameButton.addEventListener('click', gameController.resetGame)
     
+    newGameButton.addEventListener('click', showForm);
+    newRoundButton.addEventListener('click', gameController.resetRound);
+
     const addListeners = () => {
         squaresDomArray.forEach(square => {
             square.addEventListener('click', gameController.makeMove);
@@ -155,7 +154,7 @@ const displayController = (() => {
     const removeListeners = () => {
         squaresDomArray.forEach(square => {
             square.removeEventListener('click', gameController.makeMove);
-        })
+        });
     }
 
     const displayBoard = boardArray => {
@@ -190,15 +189,7 @@ const displayController = (() => {
         }
     }
     
-    //displayBoard(gameBoard.getGameBoard());
-    //addListeners();
-    showForm();
-    
     return {addListeners, displayBoard, displaySquare, displayWinner, displayTie, clearUI}
 })();
-
-const player1 = Player('Mark', 'X');
-const player2 = Player('Joe', 'O');
-
 
 

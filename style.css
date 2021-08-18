@@ -14,13 +14,14 @@ h1{
     text-shadow: 3px 2px lightskyblue;
 }
 
-#new-game{
+#top-ui button{
     background-color:transparent;
     border: 3px solid black;
     padding: 10px;
     font-size: 16px;
     color: black;
     margin-bottom: 10px;
+    margin-right: 10px;
 }
 
 #new-game:hover{
